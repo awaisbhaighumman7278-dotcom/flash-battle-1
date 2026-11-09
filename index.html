@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PUBG - Flash Battle</title>
+<style>
+body{margin:0;background:#1a2f1a;color:white;text-align:center;font-family:Arial;overflow:hidden}
+#game{width:100%;height:65vh;background:#3a5f2a;position:relative;overflow:hidden;border:3px solid orange}
+#player{position:absolute;bottom:20px;left:45%;font-size:55px;z-index:10}
+.enemy{position:absolute;font-size:45px}
+.bullet{position:absolute;width:10px;height:22px;background:yellow;border-radius:5px}
+#zone{position:absolute;border:3px solid red;border-radius:50%;pointer-events:none;opacity:0.6}
+button{padding:14px 20px;font-size:17px;background:orange;border:none;border-radius:10px;margin:4px;font-weight:bold}
+</style>
+</head>
+<body>
+<h1>🔫 PUBG - FLASH BATTLE 🔫</h1>
+<h2>❤️ Health: <span id="health">100</span> | 💀 Kills: <span id="kills">0</span> | 🏆 Alive: <span id="alive">10</span></h2>
+<div id="game">
+<div id="zone" style="width:90%;height:90%;left:5%;top:5%"></div>
+<div id="player">🪖</div>
+</div>
+<br>
+<button onclick="moveLeft()">⬅️ LEFT</button>
+<button onclick="shoot()">🔫 FIRE</button>
+<button onclick="moveRight()">RIGHT ➡️</button>
+<br>
+<button onclick="moveUp()">⬆️ UP</button>
+<button onclick="startGame()">▶️ START MATCH</button>
+<button onclick="driveCar()">🚗 CAR ME BAITHO</button>
+<script>
+let health=100,kills=0,alive=10,playerX=45,playerY=20,gameOn=false,inCar=false;
+function moveLeft(){if(playerX>2)playerX-=6;updatePlayer()}
+function moveRight(){if(playerX<88)playerX+=6;updatePlayer()}
+function moveUp(){if(playerY<75)playerY+=6;updatePlayer()}
+function updatePlayer(){let p=document.getElementById('player');p.style.left=playerX+'%';p.style.bottom=playerY+'px';p.innerText=inCar?'🚙':'🪖'}
+function driveCar(){if(!gameOn)return;inCar=!inCar;updatePlayer();alert(inCar?'Car me baith gaye! Ab tez bhago!':'Car se utar gaye!')}
+function shoot(){if(!gameOn)return;let b=document.createElement('div');b.className='bullet';b.style.left=(playerX+4)+'%';b.style.bottom=(playerY+60)+'px';document.getElementById('game').appendChild(b);let y=playerY+60;let t=setInterval(()=>{y+=12;b.style.bottom=y+'px';document.querySelectorAll('.enemy').forEach(e=>{let er=e.getBoundingClientRect(),br=b.getBoundingClientRect();if(br.top<er.bottom&&br.bottom>er.top&&br.left<er.right&&br.left>er.left){e.remove();b.remove();clearInterval(t);kills++;alive--;document.getElementById('kills').innerText=kills;document.getElementById('alive').innerText=alive;if(alive<=1){gameOn=false;alert('🏆 WINNER WINNER CHICKEN DINNER! 🏆 Kills: '+kills)}}});if(y>550){b.remove();clearInterval(t)}},30)}
+function startGame(){gameOn=true;health=100;kills=0;alive=10;playerX=45;playerY=20;inCar=false;updatePlayer();document.getElementById('health').innerText=100;document.getElementById('kills').innerText=0;document.getElementById('alive').innerText=10;document.querySelectorAll('.enemy').forEach(e=>e.remove());
+setInterval(()=>{if(!gameOn)return;if(document.querySelectorAll('.enemy').length>=5)return;let e=document.createElement('div');e.className='enemy';e.innerText=Math.random()>0.5?'🧟':'🥷';e.style.left=Math.random()*88+'%';e.style.top='0px';document.getElementById('game').appendChild(e);let y=0;let t=setInterval(()=>{if(!gameOn){clearInterval(t);return} y+=2;e.style.top=y+'px';let pr=document.getElementById('player').getBoundingClientRect(),er=e.getBoundingClientRect();if(er.bottom>pr.top&&er.top<pr.bottom&&er.left<pr.right&&er.left>pr.left){e.remove();clearInterval(t);health-=15;document.getElementById('health').innerText=health;if(health<=0){gameOn=false;alert('💀 GAME OVER! Tum mar gaye! Kills: '+kills)}}if(y>500){e.remove();clearInterval(t)}},30)},1000)}
+</script>
+</body>
+</html>
